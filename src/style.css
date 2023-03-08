@@ -1,0 +1,24 @@
+:root {
+    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+    font-weight: 400;
+    --red: #e06c75;
+    --yellow: #e5c07b;
+    --green: #98c379;
+    --blue: #61afef;
+    --cyan: #56b6c2;
+    --purple: #c678dd;
+    --accent: #61afef;
+    --bg0: #ffffff;
+    --bg1: #ededed;
+    --bg2: #dadada;
+    --bg3: #afafaf;
+    --fg0: #3a494e;
+    --fg1: #4d6066;
+    --fg2: #607880;
+    --fg3: #98aab3;
+}
+
+table th {
+    text-transform: uppercase;
+    font-size: 12px;
+}
