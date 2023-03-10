@@ -16,15 +16,14 @@ describe("createGame method", () => {
 });
 
 describe("createAreas method", () => {
-    it("should generate 5 rows and 5 columns", () => {
+    it("should generate 6 rows and 6 columns", () => {
         game.createAreas();
-        expect(game.areas.length).toBe(5);
-        expect(game.areas[0].length).toBe(5);
+        expect(game.areas.length).toBe(6);
+        expect(game.areas[0].length).toBe(6);
     });
 
     it("should have 2 wood in the fourth column", () => {
         game.createAreas();
-        console.log(game.areas.map(area => area.map(a => a.resources)));
-        expect(game.areas[2][3].resources.wood).toBe(2);
+        expect(game.areas[2][3].resources.wood).toBe(3);
     });
 });

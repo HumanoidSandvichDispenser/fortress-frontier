@@ -6,32 +6,38 @@ export default class Area {
     row: number;
     col: number;
     resources: ResourceCollection;
-    owner: Player | null;
-    units: Unit[];
+    //owner: Player | null;
+    units: Set<Unit>;
     hasFortress: boolean;
 
     constructor(row: number, col: number, resources: ResourceCollection) {
         this.row = row;
         this.col = col;
         this.resources = resources;
-        this.owner = null;
-        this.units = [];
+        //this.owner = null;
+        this.units = new Set<Unit>();
         this.hasFortress = false;
     }
 
     addUnit(unit: Unit) {
-        this.units.push(unit);
-    }
-
-    removeUnit(unit: Unit) {
-        const index = this.units.indexOf(unit);
-        if (index != -1) {
-            this.units.splice(index, 1);
+        this.units.add(unit);
+        if (unit.area != this) {
+            unit.assignToArea(this);
         }
     }
 
+    removeUnit(unit: Unit) {
+        if (this.units.has(unit)) {
+            this.units.delete(unit);
+        }
+        unit.area = null;
+    }
+
     findLowestUnit() {
-        return this.units.reduce((prev, cur) => {
+        if (this.units.size == 0) {
+            return undefined;
+        }
+        return Array.from(this.units).reduce((prev, cur) => {
             return prev.level < cur.level ? prev : cur;
         });
     }
@@ -67,5 +73,12 @@ export default class Area {
 
     get totalResources(): number {
         return Object.values(this.resources).reduce((prev, sum) => prev + sum);
+    }
+
+    get owner(): Player | null {
+        if (this.units.size == 0) {
+            return null;
+        }
+        return Array.from(this.units)[0].player;
     }
 }

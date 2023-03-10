@@ -16,6 +16,9 @@
     --fg1: #4d6066;
     --fg2: #607880;
     --fg3: #98aab3;
+    --player-red: 224, 108, 117;
+    --player-blue: 97, 175, 239;
+    --player-green: 152, 195, 121;
 }
 
 table th {

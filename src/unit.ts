@@ -8,6 +8,7 @@ export default class Unit {
     player: Player | null;
     area: Area | null;
     level: number;
+    isDead: boolean = false;
 
     constructor(type: string, level: number) {
         this.name = type;
@@ -18,44 +19,56 @@ export default class Unit {
 
     assignToPlayer(player: Player) {
         this.player = player;
-        if (!this.player.units.includes(this)) {
+        if (!this.player.units.has(this)) {
             this.player.addUnit(this);
         }
     }
 
     assignToArea(area: Area) {
+        if (this.area != null) {
+            // remove ourselves from our old area
+            this.area.removeUnit(this);
+        }
         this.area = area;
+        area.addUnit(this);
     }
 
     moveToArea(area: Area): boolean {
-        if (this.area) {
-            if (!this.area.isAdjacentTo(area)) {
-                return false;
-            }
-            this.area.removeUnit(this);
-        }
+        let weakest;
+        while (true) {
+            weakest = area.findLowestUnit();
 
-        if (area.owner == this.player) {
-            // we own this area, so we can safely travel here
-            this.area = area;
-            area.addUnit(this);
-        } else {
-            let weakest = area.findLowestUnit();
+            if (!weakest || weakest.player == this.player) {
+                break;
+            }
+
+            if (this.isDead) {
+                break;
+            }
+
             const results = this.attack(weakest);
             if (results.winner != this) {
-                this.die();
+                this.die(results);
             }
 
             if (results.winner != weakest) {
-                weakest.die();
+                weakest.die(results);
             }
+        }
+
+        if (!this.isDead) {
+            this.assignToArea(area);
         }
 
         return true;
     }
 
-    die(): void {
-        this.area = null;
+    die(result: AttackResult): void {
+        this.isDead = true;
+        this.area?.removeUnit(this);
+        console.log(result.attacker.name + ": " + result.attackerRoll);
+        console.log(result.victim.name + ": " + result.victimRoll);
+        console.log(result.winner?.name + " won");
     }
 
     /**
@@ -75,7 +88,7 @@ export default class Unit {
         }
 
         let ourRoll = ourRolls.reduce((val, sum) => sum += val);
-        let theirRoll = ourRolls.reduce((val, sum) => sum += val);
+        let theirRoll = theirRolls.reduce((val, sum) => sum += val);
         let winner: Unit | undefined;
 
         if (ourRoll > theirRoll) {

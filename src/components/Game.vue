@@ -4,19 +4,32 @@ import Area from "../area";
 import { useGameStore } from "../store/game";
 import AreaVue from "./Area.vue";
 import AreaInfoVue from "./AreaInfo.vue";
+import PlayerInfoVue from "./PlayerInfo.vue";
 
 const game = useGameStore();
 game.createGame(2);
 
-const selectedArea = ref<Area>();
-
 function onAreaClicked(area: Area) {
+    if (game.movingUnit != undefined) {
+        if (area.isAdjacentTo(game.movingUnit.area)) {
+            game.movingUnit.moveToArea(area);
+            game.movingUnit = undefined;
+            game.currentTurn++;
+        } else {
+            // cancel
+            game.movingUnit = undefined;
+            return;
+        }
+    }
+
     if (area == selectedArea.value) {
         selectedArea.value = undefined;
     } else {
         selectedArea.value = area;
     }
 }
+
+const selectedArea = ref<Area>();
 </script>
 
 <template>
@@ -31,6 +44,7 @@ function onAreaClicked(area: Area) {
             </div>
         </div>
         <div class="sidebar">
+            <player-info-vue />
             <area-info-vue v-if="selectedArea" :area="selectedArea" />
         </div>
     </div>

@@ -5,8 +5,9 @@ import Unit from "./unit";
 export default class Player {
     name: string;
     resources: ResourceCollection;
-    units: Unit[];
+    units: Set<Unit>;
     cards: Card[];
+    color: string = "--bg0";
 
     constructor(name: string) {
         this.name = name;
@@ -16,19 +17,16 @@ export default class Player {
             stone: 5,
             metal: 5,
         };
-        this.units = [];
+        this.units = new Set<Unit>();
         this.cards = [];
     }
 
     addUnit(unit: Unit) {
-        this.units.push(unit);
+        this.units.add(unit);
         unit.assignToPlayer(this);
     }
 
     removeUnit(unit: Unit) {
-        const index = this.units.indexOf(unit);
-        if (index !== -1) {
-            this.units.splice(index, 1);
-        }
+        this.units.delete(unit);
     }
 }
